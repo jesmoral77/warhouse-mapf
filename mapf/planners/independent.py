@@ -3,6 +3,7 @@ The resulting paths will usually contain conflicts; that is the point of the bas
 
 from __future__ import annotations
 
+import logging
 import time
 from typing import Sequence
 
@@ -11,6 +12,7 @@ from mapf.grid import Cell, Grid
 from mapf.planners.base import ERROR, FAILED, SOLVED, TIMEOUT, PlanResult
 
 NAME = "independent"
+log = logging.getLogger("mapf.independent")
 
 
 def plan(
@@ -32,6 +34,8 @@ def plan(
             if res.path is None:
                 return PlanResult(NAME, FAILED, None, time.perf_counter() - t0, expanded,
                                   f"agent {i}: no path from {tuple(s)} to {tuple(g)}")
+            log.info("agent %d %s -> %s cost %d expanded %d",
+                     i, tuple(s), tuple(g), len(res.path) - 1, res.nodes_expanded)
             paths.append(res.path)
     except Exception as e:
         return PlanResult(NAME, ERROR, None, time.perf_counter() - t0, expanded, repr(e))

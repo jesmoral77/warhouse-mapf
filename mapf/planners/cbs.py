@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import heapq
 import itertools
+import logging
 import time
 from collections import defaultdict
 from dataclasses import dataclass
@@ -12,6 +13,7 @@ from mapf.grid import Cell, Grid
 from mapf.planners.base import ERROR, FAILED, SOLVED, TIMEOUT, PlanResult
 
 NAME = "cbs"
+log = logging.getLogger("mapf.cbs")
 
 
 def _at(path: list[Cell], t: int) -> Cell:
@@ -85,6 +87,7 @@ def plan(
         tie = itertools.count()
         root = Node(root_cons, root_paths, cost(root_paths), find_conflicts(root_paths))
         stats["high_level_generated"] += 1
+        log.info("root: cost %d, %d conflicts", root.cost, len(root.conflicts))
         open_heap = [(root.cost, len(root.conflicts), next(tie), root)]
 
         while open_heap:
@@ -92,10 +95,15 @@ def plan(
                 return result(TIMEOUT, message=f"timed out after {stats['high_level_expanded']} nodes")
             _, _, _, node = heapq.heappop(open_heap)
             stats["high_level_expanded"] += 1
-            if not node.conflicts:
+            conflict = node.conflicts[0] if node.conflicts else None
+            log.info("expand #%d: cost %d, %d conflicts, open %d, branching on %s",
+                     stats["high_level_expanded"], node.cost, len(node.conflicts),
+                     len(open_heap), conflict)
+            if conflict is None:
+                log.info("solution found: cost %d, %d high-level nodes expanded, %d generated",
+                         node.cost, stats["high_level_expanded"], stats["high_level_generated"])
                 return result(SOLVED, node.paths)
 
-            conflict = node.conflicts[0]
             if conflict[0] == "vertex":
                 _, i, j, cell, t = conflict
                 branches = [(i, ("vertex", cell, t)), (j, ("vertex", cell, t))]

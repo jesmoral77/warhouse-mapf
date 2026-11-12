@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import time
 from typing import Sequence
 
@@ -8,6 +9,7 @@ from mapf.grid import Cell, Grid
 from mapf.planners.base import ERROR, FAILED, SOLVED, TIMEOUT, PlanResult
 
 NAME = "prioritized"
+log = logging.getLogger("mapf.prioritized")
 
 
 def reserve(reservations: Constraints, path: list[Cell]) -> None:
@@ -37,6 +39,7 @@ def plan(
         return PlanResult(NAME, status, out, time.perf_counter() - t0, expanded, message,
                           {"order": order})
 
+    log.info("plan order: %s", order)
     try:
         for rank, i in enumerate(order):
             if deadline is not None and time.perf_counter() > deadline:
@@ -46,7 +49,12 @@ def plan(
             if res.timed_out:
                 return result(TIMEOUT, f"timed out while planning agent {i}")
             if res.path is None:
+                log.info("priority %d: agent %d %s -> %s FAILED (expanded %d)",
+                         rank, i, tuple(starts[i]), tuple(goals[i]), res.nodes_expanded)
                 return result(FAILED, f"agent {i} (priority {rank}): no path avoiding earlier agents")
+            log.info("priority %d: agent %d %s -> %s cost %d expanded %d",
+                     rank, i, tuple(starts[i]), tuple(goals[i]), len(res.path) - 1,
+                     res.nodes_expanded)
             paths[i] = res.path
             reserve(reservations, res.path)
     except Exception as e:
