@@ -24,6 +24,63 @@ INK = "#1f1f1e"
 INK_MUTED = "#6b6a63"
 
 
+PLANNER_STYLE = {
+    "independent": (PALETTE[0], "o"),
+    "prioritized": (PALETTE[1], "s"),
+    "cbs": (PALETTE[2], "^"),
+}
+
+
+def plot_summary(summary: Sequence[dict], out: str | Path, timeout: float | None = None,
+                 title: str = "") -> None:
+    planners = [p for p in PLANNER_STYLE if any(r["planner"] == p for r in summary)]
+    planners += sorted({r["planner"] for r in summary} - set(planners))
+    agents = sorted({r["n_agents"] for r in summary})
+    panels = [
+        ("success_rate", "Success rate", lambda v: v * 100, "% of seeds solved and valid"),
+        ("mean_sum_of_costs", "Mean sum of costs", lambda v: v, "successful runs only"),
+        ("mean_runtime_s", "Mean runtime (s)", lambda v: v, "all runs, log scale"),
+    ]
+    fig, axes = plt.subplots(1, 3, figsize=(14, 4.4), dpi=120)
+    fig.patch.set_facecolor(SURFACE)
+    for ax, (key, label, f, note) in zip(axes, panels):
+        ax.set_facecolor(SURFACE)
+        for i, planner in enumerate(planners):
+            col, marker = PLANNER_STYLE.get(planner, (color(i + 3), "D"))
+            pts = [(r["n_agents"], f(r[key])) for r in summary
+                   if r["planner"] == planner and r[key] is not None]
+            if not pts:
+                continue
+            xs, ys = zip(*sorted(pts))
+            ax.plot(xs, ys, color=col, linewidth=2, marker=marker, markersize=7,
+                    markeredgecolor=SURFACE, markeredgewidth=1.5, label=planner, zorder=3)
+        ax.set_title(label, color=INK, fontsize=11, loc="left", pad=20)
+        ax.text(0, 1.025, note, transform=ax.transAxes, color=INK_MUTED, fontsize=8.5,
+                va="bottom")
+        ax.set_xlabel("agents", color=INK_MUTED, fontsize=9)
+        ax.set_xticks(agents)
+        ax.grid(axis="y", color=GRIDLINE, linewidth=0.8)
+        ax.set_axisbelow(True)
+        ax.tick_params(colors=INK_MUTED, labelsize=8.5, length=0)
+        for side, spine in ax.spines.items():
+            spine.set_visible(side == "bottom")
+            spine.set_color(GRIDLINE)
+    axes[0].set_ylim(-4, 104)
+    axes[2].set_yscale("log")
+    if timeout:
+        axes[2].axhline(timeout, color=INK_MUTED, linewidth=1, linestyle=(0, (4, 3)), zorder=2)
+        axes[2].text(agents[-1], timeout * 0.8, f"timeout {timeout:g}s", color=INK_MUTED,
+                     fontsize=8, va="top", ha="right")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper left", ncol=len(labels), frameon=False, fontsize=9,
+               labelcolor=INK, bbox_to_anchor=(0.005, 0.95))
+    if title:
+        fig.suptitle(title, x=0.01, y=0.99, ha="left", color=INK, fontsize=12)
+    fig.tight_layout(rect=(0, 0, 1, 0.89))
+    fig.savefig(out, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def color(i: int) -> str:
     return PALETTE[i % len(PALETTE)]
 
