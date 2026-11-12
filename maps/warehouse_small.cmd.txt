@@ -1,0 +1,1 @@
+python -m mapf.grid --width 20 --height 15 --out maps/warehouse_small.map
