@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -54,3 +56,42 @@ def generate_scenario(grid: Grid, n_agents: int, seed: int) -> Scenario:
     idx = rng.choice(len(cells), size=2 * n_agents, replace=False)
     picked = [cells[i] for i in idx]
     return Scenario(starts=picked[:n_agents], goals=picked[n_agents:], seed=seed)
+
+
+def check_scenario(grid: Grid, starts: list[Cell], goals: list[Cell]) -> None:
+    problems = []
+    if len(starts) == 0:
+        problems.append("scenario has no agents")
+    if len(starts) != len(goals):
+        problems.append(f"{len(starts)} starts but {len(goals)} goals")
+    for kind, cells in (("start", starts), ("goal", goals)):
+        for i, cell in enumerate(cells):
+            if not grid.in_bounds(cell):
+                problems.append(f"agent {i} {kind} {cell} is outside the {grid.height}x{grid.width} map")
+            elif not grid.is_free(cell):
+                problems.append(f"agent {i} {kind} {cell} is on a blocked cell")
+        if len(set(cells)) != len(cells):
+            problems.append(f"two agents share the same {kind} cell")
+    if not problems:
+        for i, (s, g) in enumerate(zip(starts, goals)):
+            if g not in grid.component(s):
+                problems.append(f"agent {i} goal {g} is not reachable from start {s}")
+    if problems:
+        raise ValueError("; ".join(problems))
+
+
+def load_scenario(path: str | Path, grid: Grid) -> Scenario:
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        scenario = Scenario.from_dict(data)
+    except OSError as e:
+        raise ValueError(f"cannot read scenario file {path}: {e}") from e
+    except KeyError as e:
+        raise ValueError(f"{path}: not a valid scenario file (missing key {e})") from e
+    except (json.JSONDecodeError, TypeError, ValueError) as e:
+        raise ValueError(f"{path}: not a valid scenario file ({e!r})") from e
+    for cell in scenario.starts + scenario.goals:
+        if len(cell) != 2 or not all(isinstance(x, int) for x in cell):
+            raise ValueError(f"{path}: cell {list(cell)} is not a [row, col] pair of integers")
+    check_scenario(grid, scenario.starts, scenario.goals)
+    return scenario

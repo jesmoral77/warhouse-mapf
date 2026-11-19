@@ -11,8 +11,8 @@ from typing import Any, Callable
 from mapf.grid import Grid, load_map
 from mapf.metrics import compute_metrics
 from mapf.planners import cbs, independent, prioritized
-from mapf.planners.base import PlanResult
-from mapf.scenario import Scenario, generate_scenario
+from mapf.planners.base import INVALID_INPUT, PlanResult
+from mapf.scenario import Scenario, generate_scenario, load_scenario
 from mapf.validate import validate
 from mapf.visualize import animate, plot_paths
 
@@ -45,18 +45,51 @@ def _attach_log(path: Path) -> logging.Handler:
     return handler
 
 
+def load_inputs(args: argparse.Namespace) -> tuple[Grid, Scenario]:
+    try:
+        grid = load_map(args.map)
+    except OSError as e:
+        raise ValueError(f"cannot read map file {args.map}: {e}") from e
+    if args.scenario is not None:
+        scenario = load_scenario(args.scenario, grid)
+    else:
+        scenario = generate_scenario(grid, args.agents, args.seed)
+    return grid, scenario
+
+
+def invalid_input_metrics(args: argparse.Namespace, message: str) -> dict[str, Any]:
+    return {
+        "planner": args.planner,
+        "status": INVALID_INPUT,
+        "n_agents": args.agents,
+        "success": False,
+        "valid": None,
+        "sum_of_costs": None,
+        "makespan": None,
+        "runtime_s": 0.0,
+        "nodes_expanded": 0,
+        "n_conflicts": None,
+        "message": message,
+    }
+
+
 def main(argv: list[str] | None = None) -> dict[str, Any]:
     argv = sys.argv[1:] if argv is None else list(argv)
     p = argparse.ArgumentParser(description="Plan one MAPF instance and write all artifacts")
     p.add_argument("--map", type=Path, required=True)
-    p.add_argument("--agents", type=int, required=True)
-    p.add_argument("--seed", type=int, required=True)
+    p.add_argument("--agents", type=int, default=None)
+    p.add_argument("--seed", type=int, default=None)
+    p.add_argument("--scenario", type=Path, default=None,
+                   help="JSON file with explicit starts and goals (instead of --agents/--seed)")
     p.add_argument("--planner", choices=sorted(PLANNERS), required=True)
     p.add_argument("--timeout", type=float, default=30.0)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--fps", type=int, default=12)
     p.add_argument("--substeps", type=int, default=4)
     args = p.parse_args(argv)
+    random_task = args.agents is not None and args.seed is not None
+    if (args.scenario is None) == (not random_task):
+        p.error("give either --scenario, or both --agents and --seed")
 
     out: Path = args.out
     out.mkdir(parents=True, exist_ok=True)
@@ -66,10 +99,18 @@ def main(argv: list[str] | None = None) -> dict[str, Any]:
     handler = _attach_log(out / "run.log")
     try:
         log.info("command: %s", command)
-        grid = load_map(args.map)
-        scenario = generate_scenario(grid, args.agents, args.seed)
-        log.info("map %s (%dx%d, %d free), %d agents, seed %d, planner %s, timeout %.1fs",
-                 args.map, grid.width, grid.height, grid.num_free, args.agents, args.seed,
+        try:
+            grid, scenario = load_inputs(args)
+        except ValueError as e:
+            metrics = invalid_input_metrics(args, str(e))
+            log.info("status %s: %s", INVALID_INPUT, e)
+            log.info("no plan was attempted")
+            (out / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
+            print(json.dumps(metrics, indent=2))
+            return metrics
+        source = f"scenario file {args.scenario}" if args.scenario else f"seed {args.seed}"
+        log.info("map %s (%dx%d, %d free), %d agents from %s, planner %s, timeout %.1fs",
+                 args.map, grid.width, grid.height, grid.num_free, scenario.n_agents, source,
                  args.planner, args.timeout)
         for i, (s, g) in enumerate(zip(scenario.starts, scenario.goals)):
             log.info("agent %d: %s -> %s", i, s, g)
@@ -91,8 +132,9 @@ def main(argv: list[str] | None = None) -> dict[str, Any]:
             "command": command,
             "map": str(args.map),
             "planner": args.planner,
-            "n_agents": args.agents,
+            "n_agents": scenario.n_agents,
             "seed": args.seed,
+            "scenario_file": None if args.scenario is None else str(args.scenario),
             "timeout": args.timeout,
             "scenario": scenario.to_dict(),
             "result": result.to_dict(),
@@ -101,7 +143,8 @@ def main(argv: list[str] | None = None) -> dict[str, Any]:
         (out / "metrics.json").write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
         soc = metrics["sum_of_costs"]
-        title = (f"{args.planner} | {args.agents} agents, seed {args.seed} | {result.status}"
+        task = args.scenario.stem if args.scenario else f"seed {args.seed}"
+        title = (f"{args.planner} | {scenario.n_agents} agents, {task} | {result.status}"
                  + (f" | SoC {soc}, makespan {metrics['makespan']}" if soc is not None else ""))
         plot_paths(grid, result.paths, scenario.starts, scenario.goals, out / "paths.png",
                    conflicts, title)
@@ -120,4 +163,5 @@ def main(argv: list[str] | None = None) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
-    main()
+    final = main()
+    sys.exit(2 if final["status"] == INVALID_INPUT else 0)

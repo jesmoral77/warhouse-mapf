@@ -11,6 +11,7 @@ SOLVED = "solved"
 FAILED = "failed"
 TIMEOUT = "timeout"
 ERROR = "error"
+INVALID_INPUT = "invalid_input"
 
 
 @dataclass
