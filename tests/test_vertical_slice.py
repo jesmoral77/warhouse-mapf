@@ -184,3 +184,25 @@ def test_summary_has_runtime_tail():
     assert summary["p90_runtime_s"] == 9.0
     assert summary["max_runtime_s"] == 10.0
     assert set(experiment.SUMMARY_FIELDS) <= set(summary)
+
+
+SCENARIOS = Path(__file__).resolve().parent.parent / "scenarios"
+
+
+def test_aisle_swap_needs_coordination():
+    grid = load_map(MAP_SMALL)
+    scenario = load_scenario(SCENARIOS / "aisle_swap.json", grid)
+    alone = run.run_planner("independent", grid, scenario, 10)[1]
+    prioritized = run.run_planner("prioritized", grid, scenario, 10)[1]
+    cbs = run.run_planner("cbs", grid, scenario, 10)[1]
+    assert not alone["success"] and alone["n_conflicts"] > 0
+    assert prioritized["success"] and cbs["success"]
+    assert cbs["n_conflicts"] == 0
+    assert alone["sum_of_costs"] <= cbs["sum_of_costs"] <= prioritized["sum_of_costs"]
+
+
+def test_bad_scenario_file_lists_every_problem():
+    with pytest.raises(ValueError) as info:
+        load_scenario(SCENARIOS / "bad_start_on_shelf.json", load_map(MAP_SMALL))
+    assert "agent 0 start (2, 1) is on a blocked cell" in str(info.value)
+    assert "agent 1 goal (20, 5) is outside" in str(info.value)

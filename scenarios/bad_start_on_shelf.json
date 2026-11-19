@@ -1,0 +1,5 @@
+{
+  "starts": [[2, 1], [0, 0]],
+  "goals": [[4, 5], [20, 5]],
+  "meta": {"description": "unsupported input: agent 0 starts inside a shelf block and agent 1's goal is off the 15x20 map"}
+}

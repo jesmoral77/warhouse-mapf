@@ -1,0 +1,5 @@
+{
+  "starts": [[4, 1], [4, 5], [1, 6]],
+  "goals": [[4, 5], [4, 1], [7, 6]],
+  "meta": {"description": "robots 0 and 1 swap ends of the 1-wide aisle in row 4 while robot 2 crosses it down column 6"}
+}

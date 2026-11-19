@@ -2,4 +2,6 @@ CLAUDE.md
 __pycache__/
 .pytest_cache/
 .venv/
-results/
+results/*
+!results/poc/
+!results/vertical_slice/
