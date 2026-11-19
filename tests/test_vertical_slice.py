@@ -7,6 +7,7 @@ import pytest
 from mapf import run
 from mapf.grid import Grid, load_map
 from mapf.scenario import check_scenario, load_scenario
+from mapf.trace import ACTIONS, action_name, build_trace, step_line
 
 MAP_SMALL = str(Path(__file__).resolve().parent.parent / "maps" / "warehouse_small.map")
 
@@ -107,3 +108,58 @@ def test_run_accepts_scenario_file(tmp_path):
 def test_run_requires_one_task_source(tmp_path):
     with pytest.raises(SystemExit):
         run.main(["--map", MAP_SMALL, "--planner", "cbs", "--out", str(tmp_path / "run")])
+
+
+def test_action_name():
+    assert action_name((2, 2), (1, 2)) == "N"
+    assert action_name((2, 2), (3, 2)) == "S"
+    assert action_name((2, 2), (2, 3)) == "E"
+    assert action_name((2, 2), (2, 1)) == "W"
+    assert action_name((2, 2), (2, 2)) == "Wait"
+    with pytest.raises(ValueError):
+        action_name((2, 2), (4, 2))
+
+
+def test_build_trace_holds_robot_at_goal():
+    paths = [[(0, 0), (0, 1), (0, 2)], [(2, 0), (2, 0), (1, 0), (0, 0)]]
+    goals = [(0, 2), (0, 0)]
+    steps = build_trace(paths, goals)
+    assert [s["t"] for s in steps] == [0, 1, 2, 3]
+    robot0 = [s["robots"][0] for s in steps]
+    assert [r["action"] for r in robot0] == ["E", "E", "Wait", "Wait"]
+    assert [r["at_goal"] for r in robot0] == [False, False, True, True]
+    assert [r["cell"] for r in robot0][-1] == [0, 2]
+    robot1 = [s["robots"][1] for s in steps]
+    assert [r["action"] for r in robot1] == ["Wait", "N", "N", "Wait"]
+    assert step_line(steps[0]) == "t=0   a0 (0,0) E | a1 (2,0) Wait"
+
+
+def test_run_writes_trace(tmp_path):
+    out = tmp_path / "run"
+    metrics = run.main(["--map", MAP_SMALL, "--agents", "4", "--seed", "1", "--planner", "cbs",
+                        "--timeout", "5", "--out", str(out), "--substeps", "1"])
+    trace = json.loads((out / "trace.json").read_text())
+    plan = json.loads((out / "plan.json").read_text())
+    paths = plan["result"]["paths"]
+    assert trace["available_actions"] == ACTIONS
+    assert trace["percept"]["starts"] == plan["scenario"]["starts"]
+    assert trace["status"] == metrics["status"] == "solved"
+    assert len(trace["steps"]) == max(len(p) for p in paths)
+    assert len(trace["steps"]) >= metrics["makespan"] + 1
+    for step in trace["steps"]:
+        for r in step["robots"]:
+            assert r["action"] in ACTIONS
+            assert r["cell"] == paths[r["agent"]][min(step["t"], len(paths[r["agent"]]) - 1)]
+    assert all(r["at_goal"] for r in trace["steps"][-1]["robots"])
+    assert "execution trace" in (out / "run.log").read_text()
+
+
+def test_run_trace_is_empty_on_timeout(tmp_path):
+    out = tmp_path / "run"
+    metrics = run.main(["--map", MAP_SMALL, "--agents", "10", "--seed", "2", "--planner", "cbs",
+                        "--timeout", "0.2", "--out", str(out), "--substeps", "1"])
+    assert metrics["status"] == "timeout"
+    trace = json.loads((out / "trace.json").read_text())
+    assert trace["steps"] == []
+    assert trace["planner_stats"]["high_level_expanded"] > 0
+    assert "child: agent" in (out / "run.log").read_text()

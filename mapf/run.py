@@ -13,6 +13,7 @@ from mapf.metrics import compute_metrics
 from mapf.planners import cbs, independent, prioritized
 from mapf.planners.base import INVALID_INPUT, PlanResult
 from mapf.scenario import Scenario, generate_scenario, load_scenario
+from mapf.trace import ACTIONS, build_trace, step_line
 from mapf.validate import validate
 from mapf.visualize import animate, plot_paths
 
@@ -73,6 +74,27 @@ def invalid_input_metrics(args: argparse.Namespace, message: str) -> dict[str, A
     }
 
 
+def make_trace(args: argparse.Namespace, grid: Grid, scenario: Scenario,
+               result: PlanResult) -> dict[str, Any]:
+    steps = [] if result.paths is None else build_trace(result.paths, scenario.goals)
+    return {
+        "percept": {
+            "map": str(args.map),
+            "height": grid.height,
+            "width": grid.width,
+            "blocked_cells": int(grid.blocked.sum()),
+            "starts": [list(c) for c in scenario.starts],
+            "goals": [list(c) for c in scenario.goals],
+        },
+        "available_actions": ACTIONS,
+        "planner": args.planner,
+        "status": result.status,
+        "message": result.message,
+        "planner_stats": dict(result.extra),
+        "steps": steps,
+    }
+
+
 def main(argv: list[str] | None = None) -> dict[str, Any]:
     argv = sys.argv[1:] if argv is None else list(argv)
     p = argparse.ArgumentParser(description="Plan one MAPF instance and write all artifacts")
@@ -127,6 +149,15 @@ def main(argv: list[str] | None = None) -> dict[str, Any]:
             for e in validation.errors:
                 log.info("  error %s", e)
         log.info("metrics: %s", json.dumps(metrics))
+
+        trace = make_trace(args, grid, scenario, result)
+        if trace["steps"]:
+            log.info("execution trace (cell at t, action taken from t to t+1):")
+            for step in trace["steps"]:
+                log.info("  %s", step_line(step))
+        else:
+            log.info("execution trace: no paths returned, nothing to execute")
+        (out / "trace.json").write_text(json.dumps(trace, indent=1), encoding="utf-8")
 
         plan = {
             "command": command,

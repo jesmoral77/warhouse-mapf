@@ -122,6 +122,7 @@ def plan(
                 if res.timed_out:
                     return result(TIMEOUT, message="timed out in low-level search")
                 if res.path is None:
+                    log.info("  child: agent %d forbidden %s -> no path, pruned", agent, con)
                     continue
                 constraints = list(node.constraints)
                 constraints[agent] = cons
@@ -129,6 +130,8 @@ def plan(
                 paths[agent] = res.path
                 child = Node(constraints, paths, cost(paths), find_conflicts(paths))
                 stats["high_level_generated"] += 1
+                log.info("  child: agent %d forbidden %s -> cost %d, %d conflicts",
+                         agent, con, child.cost, len(child.conflicts))
                 heapq.heappush(open_heap, (child.cost, len(child.conflicts), next(tie), child))
 
         return result(FAILED, message="constraint tree exhausted")
