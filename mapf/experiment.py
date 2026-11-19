@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import math
 import subprocess
 import sys
 from pathlib import Path
@@ -20,8 +21,15 @@ FIELDS = [
 ]
 SUMMARY_FIELDS = [
     "planner", "n_agents", "runs", "successes", "success_rate", "mean_sum_of_costs",
-    "mean_makespan", "mean_runtime_s", "timeouts",
+    "mean_makespan", "mean_runtime_s", "median_runtime_s", "p90_runtime_s", "max_runtime_s",
+    "timeouts",
 ]
+
+
+def percentile(values: list[float], fraction: float) -> float:
+    ordered = sorted(values)
+    index = max(math.ceil(fraction * len(ordered)) - 1, 0)
+    return ordered[index]
 
 
 def summarize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -31,6 +39,7 @@ def summarize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     out = []
     for (planner, n), rs in groups.items():
         ok = [r for r in rs if r["success"]]
+        times = [r["runtime_s"] for r in rs]
         out.append({
             "planner": planner,
             "n_agents": n,
@@ -39,7 +48,10 @@ def summarize(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "success_rate": len(ok) / len(rs),
             "mean_sum_of_costs": mean(r["sum_of_costs"] for r in ok) if ok else None,
             "mean_makespan": mean(r["makespan"] for r in ok) if ok else None,
-            "mean_runtime_s": mean(r["runtime_s"] for r in rs),
+            "mean_runtime_s": mean(times),
+            "median_runtime_s": percentile(times, 0.5),
+            "p90_runtime_s": percentile(times, 0.9),
+            "max_runtime_s": max(times),
             "timeouts": sum(r["status"] == "timeout" for r in rs),
         })
     order = {p: i for i, p in enumerate(PLANNERS)}

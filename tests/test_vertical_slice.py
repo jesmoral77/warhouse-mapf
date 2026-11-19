@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from mapf import run
+from mapf import experiment, run
 from mapf.grid import Grid, load_map
 from mapf.scenario import check_scenario, load_scenario
 from mapf.trace import ACTIONS, action_name, build_trace, step_line
@@ -163,3 +163,24 @@ def test_run_trace_is_empty_on_timeout(tmp_path):
     assert trace["steps"] == []
     assert trace["planner_stats"]["high_level_expanded"] > 0
     assert "child: agent" in (out / "run.log").read_text()
+
+
+def test_percentile_nearest_rank():
+    values = [5.0, 1.0, 4.0, 2.0, 3.0, 10.0, 6.0, 7.0, 9.0, 8.0]
+    assert experiment.percentile(values, 0.9) == 9.0
+    assert experiment.percentile(values, 0.5) == 5.0
+    assert experiment.percentile(values, 1.0) == 10.0
+    assert experiment.percentile([0.3], 0.9) == 0.3
+
+
+def test_summary_has_runtime_tail():
+    rows = [{"planner": "cbs", "n_agents": 4, "success": t < 10, "status": "solved" if t < 10 else "timeout",
+             "sum_of_costs": 50, "makespan": 20, "runtime_s": t}
+            for t in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 9.0, 10.0]]
+    [summary] = experiment.summarize(rows)
+    assert summary["successes"] == 9
+    assert summary["timeouts"] == 1
+    assert summary["median_runtime_s"] == 0.5
+    assert summary["p90_runtime_s"] == 9.0
+    assert summary["max_runtime_s"] == 10.0
+    assert set(experiment.SUMMARY_FIELDS) <= set(summary)
