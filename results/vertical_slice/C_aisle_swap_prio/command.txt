@@ -1,0 +1,1 @@
+python -m mapf.run --map maps/warehouse_small.map --scenario scenarios/aisle_swap.json --planner prioritized --timeout 10 --out results/vertical_slice/C_aisle_swap_prio

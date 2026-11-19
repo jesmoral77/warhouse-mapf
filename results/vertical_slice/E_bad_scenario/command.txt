@@ -1,0 +1,1 @@
+python -m mapf.run --map maps/warehouse_small.map --scenario scenarios/bad_start_on_shelf.json --planner cbs --timeout 10 --out results/vertical_slice/E_bad_scenario

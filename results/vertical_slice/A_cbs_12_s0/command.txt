@@ -1,0 +1,1 @@
+python -m mapf.run --map maps/warehouse_small.map --agents 12 --seed 0 --planner cbs --timeout 10 --out results/vertical_slice/A_cbs_12_s0

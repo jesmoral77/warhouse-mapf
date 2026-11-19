@@ -1,0 +1,1 @@
+python -m mapf.run --map maps/warehouse_small.map --agents 12 --seed 0 --planner prioritized --timeout 10 --out results/vertical_slice/B_prio_12_s0

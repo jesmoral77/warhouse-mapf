@@ -1,0 +1,18 @@
+2026-11-11 20:22:47,037 mapf.run         command: python -m mapf.run --map maps/warehouse_small.map --agents 6 --seed 1 --planner independent --timeout 30 --out results/poc/ws6_s1_independent
+2026-11-11 20:22:47,049 mapf.run         map maps\warehouse_small.map (20x15, 180 free), 6 agents, seed 1, planner independent, timeout 30.0s
+2026-11-11 20:22:47,049 mapf.run         agent 0: (0, 6) -> (2, 19)
+2026-11-11 20:22:47,049 mapf.run         agent 1: (7, 7) -> (1, 5)
+2026-11-11 20:22:47,049 mapf.run         agent 2: (13, 15) -> (6, 6)
+2026-11-11 20:22:47,049 mapf.run         agent 3: (13, 4) -> (10, 19)
+2026-11-11 20:22:47,049 mapf.run         agent 4: (14, 6) -> (4, 5)
+2026-11-11 20:22:47,049 mapf.run         agent 5: (6, 19) -> (14, 3)
+2026-11-11 20:22:47,050 mapf.independent agent 0 (0, 6) -> (2, 19) cost 15 expanded 32
+2026-11-11 20:22:47,050 mapf.independent agent 1 (7, 7) -> (1, 5) cost 8 expanded 11
+2026-11-11 20:22:47,050 mapf.independent agent 2 (13, 15) -> (6, 6) cost 16 expanded 34
+2026-11-11 20:22:47,050 mapf.independent agent 3 (13, 4) -> (10, 19) cost 18 expanded 38
+2026-11-11 20:22:47,050 mapf.independent agent 4 (14, 6) -> (4, 5) cost 11 expanded 16
+2026-11-11 20:22:47,050 mapf.independent agent 5 (6, 19) -> (14, 3) cost 24 expanded 86
+2026-11-11 20:22:47,051 mapf.run         status solved 
+2026-11-11 20:22:47,051 mapf.run         validation: valid=True, 0 conflicts, 0 errors
+2026-11-11 20:22:47,051 mapf.run         metrics: {"planner": "independent", "status": "solved", "n_agents": 6, "success": true, "valid": true, "sum_of_costs": 92, "makespan": 24, "runtime_s": 0.000659, "nodes_expanded": 217, "n_conflicts": 0, "n_validation_errors": 0, "per_agent_costs": [15, 8, 16, 18, 11, 24]}
+2026-11-11 20:22:52,623 mapf.run         wrote artifacts to results\poc\ws6_s1_independent

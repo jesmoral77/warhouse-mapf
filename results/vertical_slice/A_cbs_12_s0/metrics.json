@@ -1,0 +1,29 @@
+{
+  "planner": "cbs",
+  "status": "solved",
+  "n_agents": 12,
+  "success": true,
+  "valid": true,
+  "sum_of_costs": 179,
+  "makespan": 26,
+  "runtime_s": 0.045819,
+  "nodes_expanded": 4239,
+  "n_conflicts": 0,
+  "n_validation_errors": 0,
+  "per_agent_costs": [
+    19,
+    13,
+    18,
+    8,
+    12,
+    12,
+    12,
+    16,
+    2,
+    19,
+    26,
+    22
+  ],
+  "high_level_expanded": 63,
+  "high_level_generated": 125
+}

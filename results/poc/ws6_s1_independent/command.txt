@@ -1,0 +1,1 @@
+python -m mapf.run --map maps/warehouse_small.map --agents 6 --seed 1 --planner independent --timeout 30 --out results/poc/ws6_s1_independent

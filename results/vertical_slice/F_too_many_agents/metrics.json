@@ -1,0 +1,13 @@
+{
+  "planner": "cbs",
+  "status": "invalid_input",
+  "n_agents": 200,
+  "success": false,
+  "valid": null,
+  "sum_of_costs": null,
+  "makespan": null,
+  "runtime_s": 0.0,
+  "nodes_expanded": 0,
+  "n_conflicts": null,
+  "message": "need 400 distinct cells but largest component has 180"
+}

@@ -1,0 +1,170 @@
+{
+  "command": "python -m mapf.run --map maps/warehouse_small.map --scenario scenarios/aisle_swap.json --planner cbs --timeout 10 --out results/vertical_slice/C_aisle_swap_cbs",
+  "map": "maps\\warehouse_small.map",
+  "planner": "cbs",
+  "n_agents": 3,
+  "seed": null,
+  "scenario_file": "scenarios\\aisle_swap.json",
+  "timeout": 10.0,
+  "scenario": {
+    "seed": null,
+    "starts": [
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        1,
+        6
+      ]
+    ],
+    "goals": [
+      [
+        4,
+        5
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        7,
+        6
+      ]
+    ],
+    "meta": {
+      "description": "robots 0 and 1 swap ends of the 1-wide aisle in row 4 while robot 2 crosses it down column 6"
+    }
+  },
+  "result": {
+    "planner": "cbs",
+    "status": "solved",
+    "paths": [
+      [
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          1
+        ]
+      ],
+      [
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          6
+        ]
+      ]
+    ],
+    "runtime_s": 0.2778896000236273,
+    "nodes_expanded": 43509,
+    "message": "",
+    "extra": {
+      "high_level_expanded": 984,
+      "high_level_generated": 1967
+    }
+  }
+}

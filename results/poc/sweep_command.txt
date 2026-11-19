@@ -1,0 +1,1 @@
+python -m mapf.experiment --map maps/warehouse_small.map --agents 2 4 6 8 10 12 --seeds 10 --timeout 10 --out results/poc/sweep.csv

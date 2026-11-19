@@ -1,0 +1,21 @@
+{
+  "planner": "independent",
+  "status": "solved",
+  "n_agents": 6,
+  "success": true,
+  "valid": true,
+  "sum_of_costs": 92,
+  "makespan": 24,
+  "runtime_s": 0.000659,
+  "nodes_expanded": 217,
+  "n_conflicts": 0,
+  "n_validation_errors": 0,
+  "per_agent_costs": [
+    15,
+    8,
+    16,
+    18,
+    11,
+    24
+  ]
+}

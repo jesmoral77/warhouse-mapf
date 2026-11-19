@@ -1,0 +1,107 @@
+{
+ "percept": {
+  "map": "maps\\warehouse_small.map",
+  "height": 15,
+  "width": 20,
+  "blocked_cells": 120,
+  "starts": [
+   [
+    1,
+    12
+   ],
+   [
+    11,
+    19
+   ],
+   [
+    1,
+    16
+   ],
+   [
+    2,
+    12
+   ],
+   [
+    3,
+    18
+   ],
+   [
+    14,
+    11
+   ],
+   [
+    13,
+    14
+   ],
+   [
+    0,
+    15
+   ],
+   [
+    12,
+    0
+   ],
+   [
+    7,
+    18
+   ]
+  ],
+  "goals": [
+   [
+    14,
+    17
+   ],
+   [
+    0,
+    9
+   ],
+   [
+    4,
+    6
+   ],
+   [
+    8,
+    12
+   ],
+   [
+    10,
+    8
+   ],
+   [
+    10,
+    15
+   ],
+   [
+    0,
+    17
+   ],
+   [
+    4,
+    18
+   ],
+   [
+    12,
+    19
+   ],
+   [
+    6,
+    0
+   ]
+  ]
+ },
+ "available_actions": [
+  "N",
+  "S",
+  "E",
+  "W",
+  "Wait"
+ ],
+ "planner": "cbs",
+ "status": "timeout",
+ "message": "timed out after 14314 nodes",
+ "planner_stats": {
+  "high_level_expanded": 14314,
+  "high_level_generated": 28629
+ },
+ "steps": []
+}

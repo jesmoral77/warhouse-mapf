@@ -1,0 +1,193 @@
+{
+  "command": "python -m mapf.run --map maps/warehouse_small.map --scenario scenarios/aisle_swap.json --planner prioritized --timeout 10 --out results/vertical_slice/C_aisle_swap_prio",
+  "map": "maps\\warehouse_small.map",
+  "planner": "prioritized",
+  "n_agents": 3,
+  "seed": null,
+  "scenario_file": "scenarios\\aisle_swap.json",
+  "timeout": 10.0,
+  "scenario": {
+    "seed": null,
+    "starts": [
+      [
+        4,
+        1
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        1,
+        6
+      ]
+    ],
+    "goals": [
+      [
+        4,
+        5
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        7,
+        6
+      ]
+    ],
+    "meta": {
+      "description": "robots 0 and 1 swap ends of the 1-wide aisle in row 4 while robot 2 crosses it down column 6"
+    }
+  },
+  "result": {
+    "planner": "prioritized",
+    "status": "solved",
+    "paths": [
+      [
+        [
+          4,
+          1
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      [
+        [
+          4,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          1
+        ]
+      ],
+      [
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          0,
+          6
+        ],
+        [
+          1,
+          6
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          6
+        ],
+        [
+          6,
+          6
+        ],
+        [
+          7,
+          6
+        ]
+      ]
+    ],
+    "runtime_s": 0.002573800040408969,
+    "nodes_expanded": 86,
+    "message": "",
+    "extra": {
+      "order": [
+        0,
+        1,
+        2
+      ]
+    }
+  }
+}

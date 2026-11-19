@@ -1,0 +1,109 @@
+{
+  "command": "python -m mapf.run --map maps/warehouse_small.map --agents 10 --seed 2 --planner cbs --timeout 10 --out results/vertical_slice/D_cbs_10_s2_timeout",
+  "map": "maps\\warehouse_small.map",
+  "planner": "cbs",
+  "n_agents": 10,
+  "seed": 2,
+  "scenario_file": null,
+  "timeout": 10.0,
+  "scenario": {
+    "seed": 2,
+    "starts": [
+      [
+        1,
+        12
+      ],
+      [
+        11,
+        19
+      ],
+      [
+        1,
+        16
+      ],
+      [
+        2,
+        12
+      ],
+      [
+        3,
+        18
+      ],
+      [
+        14,
+        11
+      ],
+      [
+        13,
+        14
+      ],
+      [
+        0,
+        15
+      ],
+      [
+        12,
+        0
+      ],
+      [
+        7,
+        18
+      ]
+    ],
+    "goals": [
+      [
+        14,
+        17
+      ],
+      [
+        0,
+        9
+      ],
+      [
+        4,
+        6
+      ],
+      [
+        8,
+        12
+      ],
+      [
+        10,
+        8
+      ],
+      [
+        10,
+        15
+      ],
+      [
+        0,
+        17
+      ],
+      [
+        4,
+        18
+      ],
+      [
+        12,
+        19
+      ],
+      [
+        6,
+        0
+      ]
+    ],
+    "meta": {}
+  },
+  "result": {
+    "planner": "cbs",
+    "status": "timeout",
+    "paths": null,
+    "runtime_s": 10.000682199955918,
+    "nodes_expanded": 1343960,
+    "message": "timed out after 14314 nodes",
+    "extra": {
+      "high_level_expanded": 14314,
+      "high_level_generated": 28629
+    }
+  }
+}

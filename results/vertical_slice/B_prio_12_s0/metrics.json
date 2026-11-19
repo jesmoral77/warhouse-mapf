@@ -1,0 +1,41 @@
+{
+  "planner": "prioritized",
+  "status": "solved",
+  "n_agents": 12,
+  "success": true,
+  "valid": true,
+  "sum_of_costs": 194,
+  "makespan": 30,
+  "runtime_s": 0.00431,
+  "nodes_expanded": 403,
+  "n_conflicts": 0,
+  "n_validation_errors": 0,
+  "per_agent_costs": [
+    19,
+    13,
+    18,
+    8,
+    12,
+    12,
+    12,
+    16,
+    9,
+    18,
+    27,
+    30
+  ],
+  "order": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ]
+}

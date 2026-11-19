@@ -1,0 +1,19 @@
+2026-11-11 20:22:53,350 mapf.run         command: python -m mapf.run --map maps/warehouse_small.map --agents 6 --seed 1 --planner prioritized --timeout 30 --out results/poc/ws6_s1_prioritized
+2026-11-11 20:22:53,360 mapf.run         map maps\warehouse_small.map (20x15, 180 free), 6 agents, seed 1, planner prioritized, timeout 30.0s
+2026-11-11 20:22:53,360 mapf.run         agent 0: (0, 6) -> (2, 19)
+2026-11-11 20:22:53,360 mapf.run         agent 1: (7, 7) -> (1, 5)
+2026-11-11 20:22:53,360 mapf.run         agent 2: (13, 15) -> (6, 6)
+2026-11-11 20:22:53,360 mapf.run         agent 3: (13, 4) -> (10, 19)
+2026-11-11 20:22:53,360 mapf.run         agent 4: (14, 6) -> (4, 5)
+2026-11-11 20:22:53,360 mapf.run         agent 5: (6, 19) -> (14, 3)
+2026-11-11 20:22:53,361 mapf.prioritized plan order: [0, 1, 2, 3, 4, 5]
+2026-11-11 20:22:53,361 mapf.prioritized priority 0: agent 0 (0, 6) -> (2, 19) cost 15 expanded 18
+2026-11-11 20:22:53,361 mapf.prioritized priority 1: agent 1 (7, 7) -> (1, 5) cost 8 expanded 9
+2026-11-11 20:22:53,361 mapf.prioritized priority 2: agent 2 (13, 15) -> (6, 6) cost 16 expanded 18
+2026-11-11 20:22:53,361 mapf.prioritized priority 3: agent 3 (13, 4) -> (10, 19) cost 18 expanded 19
+2026-11-11 20:22:53,362 mapf.prioritized priority 4: agent 4 (14, 6) -> (4, 5) cost 11 expanded 12
+2026-11-11 20:22:53,362 mapf.prioritized priority 5: agent 5 (6, 19) -> (14, 3) cost 24 expanded 25
+2026-11-11 20:22:53,364 mapf.run         status solved 
+2026-11-11 20:22:53,364 mapf.run         validation: valid=True, 0 conflicts, 0 errors
+2026-11-11 20:22:53,364 mapf.run         metrics: {"planner": "prioritized", "status": "solved", "n_agents": 6, "success": true, "valid": true, "sum_of_costs": 92, "makespan": 24, "runtime_s": 0.002702, "nodes_expanded": 101, "n_conflicts": 0, "n_validation_errors": 0, "per_agent_costs": [15, 8, 16, 18, 11, 24], "order": [0, 1, 2, 3, 4, 5]}
+2026-11-11 20:22:58,692 mapf.run         wrote artifacts to results\poc\ws6_s1_prioritized

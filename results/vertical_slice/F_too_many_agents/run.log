@@ -1,0 +1,3 @@
+2026-11-18 19:17:02,660 mapf.run         command: python -m mapf.run --map maps/warehouse_small.map --agents 200 --seed 0 --planner cbs --timeout 10 --out results/vertical_slice/F_too_many_agents
+2026-11-18 19:17:02,661 mapf.run         status invalid_input: need 400 distinct cells but largest component has 180
+2026-11-18 19:17:02,661 mapf.run         no plan was attempted

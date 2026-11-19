@@ -1,0 +1,15 @@
+2026-11-11 20:22:59,337 mapf.run         command: python -m mapf.run --map maps/warehouse_small.map --agents 6 --seed 1 --planner cbs --timeout 30 --out results/poc/ws6_s1_cbs
+2026-11-11 20:22:59,348 mapf.run         map maps\warehouse_small.map (20x15, 180 free), 6 agents, seed 1, planner cbs, timeout 30.0s
+2026-11-11 20:22:59,348 mapf.run         agent 0: (0, 6) -> (2, 19)
+2026-11-11 20:22:59,348 mapf.run         agent 1: (7, 7) -> (1, 5)
+2026-11-11 20:22:59,348 mapf.run         agent 2: (13, 15) -> (6, 6)
+2026-11-11 20:22:59,349 mapf.run         agent 3: (13, 4) -> (10, 19)
+2026-11-11 20:22:59,349 mapf.run         agent 4: (14, 6) -> (4, 5)
+2026-11-11 20:22:59,349 mapf.run         agent 5: (6, 19) -> (14, 3)
+2026-11-11 20:22:59,349 mapf.cbs         root: cost 92, 0 conflicts
+2026-11-11 20:22:59,350 mapf.cbs         expand #1: cost 92, 0 conflicts, open 0, branching on None
+2026-11-11 20:22:59,350 mapf.cbs         solution found: cost 92, 1 high-level nodes expanded, 1 generated
+2026-11-11 20:22:59,350 mapf.run         status solved 
+2026-11-11 20:22:59,350 mapf.run         validation: valid=True, 0 conflicts, 0 errors
+2026-11-11 20:22:59,351 mapf.run         metrics: {"planner": "cbs", "status": "solved", "n_agents": 6, "success": true, "valid": true, "sum_of_costs": 92, "makespan": 24, "runtime_s": 0.001679, "nodes_expanded": 101, "n_conflicts": 0, "n_validation_errors": 0, "per_agent_costs": [15, 8, 16, 18, 11, 24], "high_level_expanded": 1, "high_level_generated": 1}
+2026-11-11 20:23:04,723 mapf.run         wrote artifacts to results\poc\ws6_s1_cbs

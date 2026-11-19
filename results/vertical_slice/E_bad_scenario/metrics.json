@@ -1,0 +1,13 @@
+{
+  "planner": "cbs",
+  "status": "invalid_input",
+  "n_agents": null,
+  "success": false,
+  "valid": null,
+  "sum_of_costs": null,
+  "makespan": null,
+  "runtime_s": 0.0,
+  "nodes_expanded": 0,
+  "n_conflicts": null,
+  "message": "agent 0 start (2, 1) is on a blocked cell; agent 1 goal (20, 5) is outside the 15x20 map"
+}
